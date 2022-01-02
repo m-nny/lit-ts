@@ -5,6 +5,7 @@ import { MikroOrmSchemaGenerator } from './mikro-orm.schema-generator';
 @Module({
   imports: [
     NestMikroOrmModule.forRoot({
+      // TODO(m-nny): move to config
       autoLoadEntities: true,
 
       dbName: 'brain',

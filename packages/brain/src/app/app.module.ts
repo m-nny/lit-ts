@@ -6,6 +6,7 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     GraphQLModule.forRoot({
+      // TODO(m-nny): move to config
       debug: true,
       autoSchemaFile: 'schemas/brain.gql',
       sortSchema: true,
