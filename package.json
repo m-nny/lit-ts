@@ -2,7 +2,12 @@
   "name": "lit-ts",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "nx server",
+    "build": "nx build",
+    "build:affected": "nx affected:build --parallel",
+    "build:all": "nx run-many --target=build --all --parallel"
+  },
   "private": true,
   "dependencies": {
     "@mikro-orm/core": "^4.5.10",
