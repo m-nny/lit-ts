@@ -5,11 +5,17 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@mikro-orm/core": "^4.5.10",
+    "@mikro-orm/postgresql": "^4.5.10",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/graphql": "^9.1.2",
     "@nestjs/platform-express": "^8.0.0",
+    "apollo-server-express": "^3.6.1",
+    "graphql": "^15",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
+    "ts-morph": "^13.0.2",
     "tslib": "^2.0.0"
   },
   "devDependencies": {

@@ -9,20 +9,14 @@
       "options": {
         "outputPath": "dist/packages/brain",
         "main": "packages/brain/src/main.ts",
-        "tsConfig": "packages/brain/tsconfig.app.json",
-        "assets": ["packages/brain/src/assets"]
+        "tsConfig": "packages/brain/tsconfig.app.json"
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
           "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "packages/brain/src/environments/environment.ts",
-              "with": "packages/brain/src/environments/environment.prod.ts"
-            }
-          ]
+          "fileReplacements": []
         }
       }
     },
