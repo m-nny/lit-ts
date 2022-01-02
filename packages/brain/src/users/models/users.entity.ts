@@ -1,5 +1,6 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { AppUser } from '../../auth/models/jwt.app-user';
 import { BaseEntity } from '../../utils/entity.base';
 import { CreateEntity, EntityPK, UpdateEntity } from '../../utils/entity.utils';
 
@@ -23,6 +24,12 @@ export class UserEntity extends BaseEntity {
     this.username = dto.username;
     this.fullName = dto.fullName;
     this.hashedPassword = dto.hashedPassword;
+  }
+
+  toAppUser(): AppUser {
+    return {
+      username: this.username,
+    };
   }
 }
 

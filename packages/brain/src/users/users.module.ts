@@ -8,6 +8,6 @@ import { UsersService } from './users.service';
 @Module({
   imports: [MikroOrmModule.forFeature([UserEntity])],
   providers: [UsersService, UsersResolver, BcryptService],
-  exports: [],
+  exports: [UsersService, BcryptService],
 })
 export class UsersModule {}
