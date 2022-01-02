@@ -1,8 +1,11 @@
+import { Entity, PrimaryKey } from '@mikro-orm/core';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('User')
-export class UserModel {
+@Entity({ tableName: 'user' })
+export class UserEntity {
   @Field(() => Int)
+  @PrimaryKey()
   id: number;
 
   @Field()

@@ -691,6 +691,11 @@
     knex "0.21.19"
     sqlstring "2.3.2"
 
+"@mikro-orm/nestjs@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@mikro-orm/nestjs/-/nestjs-4.3.1.tgz#6359070b70c3621e780026ec1b3fdb20228d0952"
+  integrity sha512-wfWbKpmvQyUyJhsjbguRySNZr1xOUqB198kW0FL7sgBuM/+cnvDEC1OaD0SAF8Tl+f5uN3D+GkqVZmDXWfol9A==
+
 "@mikro-orm/postgresql@^4.5.10":
   version "4.5.10"
   resolved "https://registry.yarnpkg.com/@mikro-orm/postgresql/-/postgresql-4.5.10.tgz#89847e39bf5b2b18fe1f57e75b19efcb57f47df3"
