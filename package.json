@@ -23,6 +23,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "graphql": "^15",
+    "jest-mock": "^27.4.2",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",

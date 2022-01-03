@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {},
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "strictPropertyInitialization": false
   },
   "exclude": ["node_modules", "tmp"]
 }

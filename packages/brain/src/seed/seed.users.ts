@@ -8,7 +8,7 @@ import { UsersService } from '../users/users.service';
 
 const mockUsers: CreatePlainUser[] = [
   {
-    username: 'jane-doe',
+    username: 'jane_doe',
     fullName: 'Jane Doe',
     plainPassword: 'super_secret_password',
     roles: [AppUserRole.admin],

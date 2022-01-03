@@ -6,7 +6,6 @@ async function bootstrap() {
   const argv = yargs(process.argv.slice(2)).options({
     seed: { type: 'boolean', default: false },
   }).argv;
-  console.log({ argv });
   if (argv.seed) {
     await runSeedApp();
   } else {

@@ -1,20 +1,12 @@
-import { EntityRepository, wrap } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { wrap } from '@mikro-orm/core';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { CreateUser, UpdateUser, UserEntity } from './models/users.entity';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(UserEntity)
-    private readonly repo: EntityRepository<UserEntity>
-  ) {}
+  constructor(private readonly repo: UsersRepository) {}
 
   async findOne(username: string): Promise<UserEntity | null> {
     const item = await this.repo.findOne({ username: username });
@@ -27,15 +19,15 @@ export class UsersService {
   }
 
   async create(dto: CreateUser, flush = true): Promise<UserEntity> {
-    const { username } = dto;
-    const exists = await this.repo.count({ username });
+    //const { username } = dto;
+    //const exists = await this.repo.count({ username });
 
-    if (exists > 0) {
-      throw new BadRequestException({
-        message: 'Input data validation failed',
-        errors: { username: 'Username must be unique.' },
-      });
-    }
+    //if (exists > 0) {
+    //throw new BadRequestException({
+    //message: 'Input data validation failed',
+    //errors: { username: 'Username must be unique.' },
+    //});
+    //}
 
     const item = new UserEntity(dto);
 
