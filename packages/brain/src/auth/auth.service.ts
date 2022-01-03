@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import _ from 'lodash';
 import { UserCredentials } from '../users/models/plain-users.type';
 import { BcryptService } from '../users/users.bcrypt';
 import { UsersService } from '../users/users.service';

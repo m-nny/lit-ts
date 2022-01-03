@@ -1,6 +1,7 @@
 {
   "version": 2,
   "projects": {
-    "brain": "packages/brain"
+    "brain": "packages/brain",
+    "config": "packages/config"
   }
 }

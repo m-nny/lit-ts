@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
+import { ConfigWrapper } from '../config/config.wrapper';
 import {
   HashedUser,
   PlainUser,
@@ -12,12 +13,16 @@ export type CheckPasswordArgs = {
   plainPassword: string;
   hashedPassword: string;
 };
+
 @Injectable()
 export class BcryptService {
-  // TODO(m-nny): move to config
-  private saltOrRounds = 10;
+  private config;
+  constructor({ config }: ConfigWrapper) {
+    this.config = config.bcrypt;
+  }
+
   async hashPassword(plainPassword: string): Promise<string> {
-    const hashed = await bcrypt.hash(plainPassword, this.saltOrRounds);
+    const hashed = await bcrypt.hash(plainPassword, this.config.saltOrRounds);
     return hashed;
   }
   async checkPassword({

@@ -1,20 +1,16 @@
 import { MikroOrmModule as NestMikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '../config/config.module';
+import { MikroOrmModuleConfig } from './mikro-orm.config';
 import { MikroOrmSchemaGenerator } from './mikro-orm.schema-generator';
 
 @Module({
   imports: [
-    NestMikroOrmModule.forRoot({
-      // TODO(m-nny): move to config
-      autoLoadEntities: true,
-
-      dbName: 'brain',
-      type: 'postgresql',
-      host: 'localhost',
-      port: 9001,
-      user: 'lit',
-      password: 'change-in-production',
+    NestMikroOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: MikroOrmModuleConfig,
     }),
+    ConfigModule,
   ],
   providers: [MikroOrmSchemaGenerator],
 })
