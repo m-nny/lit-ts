@@ -1,21 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { AppUser } from '../../auth/models/jwt.app-user';
+import { AppUserRole } from '../../auth/models/jwt.app-user';
+import { createEntityType } from '../../utils/entity.utils';
 import { CreatePlainUser } from '../models/plain-users.type';
+import { UserEntity } from '../models/users.entity';
 
 @InputType()
-export class CreateUserInput implements CreatePlainUser {
-  @Field()
-  username: string;
-
-  @Field()
-  fullName: string;
+export class CreateUserInput
+  extends createEntityType(UserEntity, ['hashedPassword'])
+  implements CreatePlainUser
+{
+  @Field(() => [AppUserRole], { defaultValue: [AppUserRole.student] })
+  roles: AppUserRole[];
 
   @Field()
   plainPassword: string;
-
-  toAppUser(): AppUser {
-    return {
-      username: this.username,
-    };
-  }
 }

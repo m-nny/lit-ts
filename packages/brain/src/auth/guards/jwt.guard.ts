@@ -10,7 +10,7 @@ import { Request as ExpressRequest } from 'express';
 import { AppUser } from '../models/jwt.app-user';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class JwtGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

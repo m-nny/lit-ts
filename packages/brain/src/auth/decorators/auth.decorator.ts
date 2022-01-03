@@ -1,4 +1,8 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../guards/auth.guard';
+import { JwtGuard } from '../guards/jwt.guard';
+import { AppRoleGuard } from '../guards/roles.guard';
+import { AppUserRole } from '../models/jwt.app-user';
+import { RolesRequired } from './roles.decorator';
 
-export const RequireAuth = () => applyDecorators(UseGuards(AuthGuard));
+export const RequireAuth = (...roles: AppUserRole[]) =>
+  applyDecorators(RolesRequired(...roles), UseGuards(JwtGuard, AppRoleGuard));

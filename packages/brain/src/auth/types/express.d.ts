@@ -1,9 +1,7 @@
 import { AppUser } from '../models/jwt.app-user';
 
-declare global {
-  namespace Express {
-    export interface Request {
-      user?: AppUser;
-    }
+declare module 'express' {
+  export interface Request {
+    user?: AppUser;
   }
 }
