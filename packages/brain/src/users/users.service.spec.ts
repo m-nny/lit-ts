@@ -1,44 +1,101 @@
-import { EntityManager } from '@mikro-orm/core';
-import { Test, TestingModule } from '@nestjs/testing';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Test } from '@nestjs/testing';
+import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { AppUserRole } from '../auth/models/jwt.app-user';
+import { CreateUser } from './models/users.entity';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
+const moduleMocker = new ModuleMocker(global);
+
 describe('UsersService', () => {
   let usersRepo: jest.Mocked<UsersRepository>;
-  let service: UsersService;
+  let usersService: UsersService;
 
   beforeEach(async () => {
-    const usersRepoMock = {
-      //findAll: jest.fn(),
-      //findOne: jest.fn(),
-      //persist: jest.fn(),
-    };
-    const entityManagerMock = {
-      //flush: jest.fn(),
-      //getRepository: jest.fn(() => usersRepoMock),
-      //transactional: jest.fn(async (cb) => {
-      //await cb(entityManagerMock);
-      //}),
-    };
+    const moduleRef = await Test.createTestingModule({
+      providers: [UsersService],
+    })
+      .useMocker((token) => {
+        if (token === UsersRepository) {
+          return {
+            persist: jest.fn(),
+            flush: jest.fn(),
+            findAll: jest.fn(),
+            findOne: jest.fn(),
+          } as Partial<UsersRepository>;
+        }
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        {
-          provide: EntityManager,
-          useValue: entityManagerMock,
-        },
-        {
-          provide: UsersRepository,
-          useValue: usersRepoMock,
-        },
-        UsersService,
-      ],
-    }).compile();
-    usersRepo = module.get(UsersRepository);
-    service = module.get(UsersService);
+    usersRepo = moduleRef.get(UsersRepository);
+    usersService = moduleRef.get(UsersService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(usersService).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should create a new user', async () => {
+      const userDto: CreateUser = {
+        username: 'jane_doe',
+        fullName: 'Jane Doe',
+        roles: [AppUserRole.admin],
+        hashedPassword: '**HASHED_PASSWORD**',
+      };
+      expect(await usersService.create(userDto)).toMatchObject(userDto);
+      expect(usersRepo.persist).toHaveBeenCalled();
+      expect(usersRepo.flush).toHaveBeenCalled();
+    });
+  });
+
+  describe('findAll', () => {
+    it('should find all users', async () => {
+      const users = [
+        {
+          username: 'jane_doe',
+          fullName: 'Jane Doe',
+          roles: [AppUserRole.admin],
+          hashedPassword: '**HASHED_PASSWORD**',
+        },
+        {
+          username: 'jane-foster',
+          fullName: 'Jane Foster',
+          roles: [AppUserRole.student],
+          hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
+        },
+      ];
+      usersRepo.findAll.mockReturnValue(users as any);
+      const result = await usersService.findAll();
+      expect(result[0]).toContainEqual({
+        username: 'jane-foster',
+        fullName: 'Jane Foster',
+        roles: [AppUserRole.student],
+        hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
+      });
+      expect(usersRepo.findAll).toHaveBeenCalled();
+    });
+  });
+  describe('findOne', () => {
+    it('should find a user', async () => {
+      const user = {
+        username: 'jane_doe',
+        fullName: 'Jane Doe',
+        roles: [AppUserRole.admin],
+        hashedPassword: '**HASHED_PASSWORD**',
+      };
+      usersRepo.findOne.mockReturnValue(user as any);
+      const result = await usersService.findOne(user.username);
+      expect(result).toMatchObject(user);
+      expect(usersRepo.findOne).toHaveBeenCalled();
+    });
   });
 });

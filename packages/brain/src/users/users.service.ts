@@ -19,16 +19,6 @@ export class UsersService {
   }
 
   async create(dto: CreateUser, flush = true): Promise<UserEntity> {
-    //const { username } = dto;
-    //const exists = await this.repo.count({ username });
-
-    //if (exists > 0) {
-    //throw new BadRequestException({
-    //message: 'Input data validation failed',
-    //errors: { username: 'Username must be unique.' },
-    //});
-    //}
-
     const item = new UserEntity(dto);
 
     this.repo.persist(item);

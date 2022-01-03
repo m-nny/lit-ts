@@ -42,5 +42,5 @@ export class UserEntity extends BaseEntity {
 }
 
 export type UserKey = EntityPK<UserEntity, 'username'>;
-export type CreateUser = CreateEntity<UserEntity, never>;
+export type CreateUser = CreateEntity<UserEntity, 'toAppUser'>;
 export type UpdateUser = UpdateEntity<UserEntity, 'username'>;
