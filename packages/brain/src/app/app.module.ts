@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from '../auth/auth.module';
 import { MikroOrmModule } from '../mikro-orm/mikro-orm.module';
+import { SeedModule } from '../seed/seed.module';
 import { UsersModule } from '../users/users.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { UsersModule } from '../users/users.module';
     MikroOrmModule,
     UsersModule,
     AuthModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],

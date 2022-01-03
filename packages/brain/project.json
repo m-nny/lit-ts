@@ -26,6 +26,13 @@
         "buildTarget": "brain:build"
       }
     },
+    "seed": {
+      "executor": "@nrwl/node:execute",
+      "options": {
+        "buildTarget": "brain:build",
+        "args": ["--seed"]
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],

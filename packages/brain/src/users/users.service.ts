@@ -6,13 +6,8 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import _ from 'lodash';
-import {
-  CreateUser,
-  UpdateUser,
-  UserEntity,
-  UserKey,
-} from './models/users.entity';
+import { instanceToPlain } from 'class-transformer';
+import { CreateUser, UpdateUser, UserEntity } from './models/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -51,7 +46,7 @@ export class UsersService {
     return item;
   }
 
-  // NOTE(m-nny): there should be a more proper way of creating multiple items
+  // FIXME(m-nny): there should be a more proper way of creating multiple items
   async createMultiple(dtos: CreateUser[]): Promise<UserEntity[]> {
     const items = await Promise.all(
       dtos.map((item) => this.create(item, false))
@@ -60,11 +55,36 @@ export class UsersService {
     return items;
   }
 
+  async upsert(dto: CreateUser, flush = true): Promise<UserEntity> {
+    const { username } = dto;
+    let item = await this.repo.findOne({ username });
+
+    if (item === null) {
+      item = new UserEntity(dto);
+      this.repo.persist(item);
+    } else {
+      wrap(item).assign(instanceToPlain(dto));
+    }
+
+    if (flush) {
+      await this.repo.flush();
+    }
+
+    return item;
+  }
+
+  async upsertMultiple(dtos: CreateUser[]): Promise<UserEntity[]> {
+    const items = await Promise.all(
+      dtos.map((item) => this.upsert(item, false))
+    );
+    await this.repo.flush();
+    return items;
+  }
+
   async update(username: string, dto: UpdateUser): Promise<UserEntity> {
-    dto = _.omitBy(dto, _.isUndefined);
     const item = await this.repo.findOne({ username });
 
-    if (item == null) {
+    if (item === null) {
       throw new HttpException(
         {
           message: 'Input data validation failed',
@@ -74,7 +94,7 @@ export class UsersService {
       );
     }
 
-    wrap(item).assign({ ...dto });
+    wrap(item).assign(instanceToPlain(dto));
     await this.repo.flush();
 
     return item;
