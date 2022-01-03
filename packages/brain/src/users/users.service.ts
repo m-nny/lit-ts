@@ -1,6 +1,11 @@
 import { EntityRepository, wrap } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import _ from 'lodash';
 import {
   CreateUser,
@@ -31,13 +36,10 @@ export class UsersService {
     const exists = await this.repo.count({ username });
 
     if (exists > 0) {
-      throw new HttpException(
-        {
-          message: 'Input data validation failed',
-          errors: { username: 'Username must be unique.' },
-        },
-        HttpStatus.BAD_REQUEST
-      );
+      throw new BadRequestException({
+        message: 'Input data validation failed',
+        errors: { username: 'Username must be unique.' },
+      });
     }
 
     const item = new UserEntity(dto);

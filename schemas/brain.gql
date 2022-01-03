@@ -5,6 +5,7 @@
 input CreateUserInput {
   fullName: String!
   plainPassword: String!
+  roles: [UserRole!] = [student]
   username: String!
 }
 
@@ -21,6 +22,7 @@ type Mutation {
 type Query {
   allUsers: UsersList!
   userByKey(username: String!): User
+  whoAmI: User
 }
 
 input UpdateUserInput {
@@ -36,12 +38,18 @@ input UpdateUserPatchInput {
 type User {
   createdAt: DateTime!
   fullName: String!
+  roles: [UserRole!]!
   updatedAt: DateTime!
   username: String!
 }
 
 input UserKeyInput {
   username: String!
+}
+
+enum UserRole {
+  admin
+  student
 }
 
 type UsersList {

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx server",
+    "start": "nx serve",
     "build": "nx build",
     "build:affected": "nx affected:build --parallel",
     "build:all": "nx run-many --target=build --all --parallel"
@@ -16,9 +16,12 @@
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/graphql": "^9.1.2",
+    "@nestjs/jwt": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "apollo-server-express": "^3.6.1",
     "bcrypt": "^5.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
     "graphql": "^15",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
