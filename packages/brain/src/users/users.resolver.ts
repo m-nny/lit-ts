@@ -1,4 +1,7 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { RequireAuth } from '../auth/decorators/auth.decorator';
+import { CurrentUser } from '../auth/guards/auth.guard';
+import { AppUser } from '../auth/models/jwt.app-user';
 import { wrapEntityList } from '../utils/entity.list';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -8,6 +11,7 @@ import { BcryptService } from './users.bcrypt';
 import { UsersService } from './users.service';
 
 @Resolver(UserEntity)
+@RequireAuth()
 export class UsersResolver {
   constructor(
     private usersService: UsersService,
@@ -41,6 +45,12 @@ export class UsersResolver {
   ): Promise<UserEntity> {
     const hashedPatch = await this.bcrypt.hashUserPatch(patch);
     const item = await this.usersService.update(key.username, hashedPatch);
+    return item;
+  }
+
+  @Query(() => UserEntity, { nullable: true })
+  async whoAmI(@CurrentUser() appUser: AppUser): Promise<UserEntity | null> {
+    const item = await this.usersService.findOne(appUser.username);
     return item;
   }
 }
