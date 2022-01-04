@@ -10,7 +10,7 @@ input CreateProblemInput {
 input CreateUserInput {
   fullName: String!
   plainPassword: String!
-  roles: [UserRole!] = [student]
+  roles: [UserRole!] = [Student]
   username: String!
 }
 
@@ -27,6 +27,7 @@ type Mutation {
 }
 
 type Problem {
+  author: User!
   createdAt: DateTime!
   id: Int!
   title: String!
@@ -82,8 +83,9 @@ input UserKeyInput {
 }
 
 enum UserRole {
-  admin
-  student
+  Admin
+  Instructor
+  Student
 }
 
 type UsersList {

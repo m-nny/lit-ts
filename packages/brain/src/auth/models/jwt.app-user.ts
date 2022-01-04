@@ -4,6 +4,7 @@ export type AppUser = {
 };
 
 export enum AppUserRole {
-  admin = 'ADMIN',
-  student = 'STUDENT',
+  Admin = 'ADMIN',
+  Student = 'STUDENT',
+  Instructor = 'INSTRUCTOR',
 }

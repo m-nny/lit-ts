@@ -1,6 +1,10 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, ResolveField, Resolver, Root } from '@nestjs/graphql';
 import { RequireAuth } from '../auth/decorators/auth.decorator';
-import { AppUserRole } from '../auth/models/jwt.app-user';
+import { RolesRequired } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/guards/jwt.guard';
+import { AppUser, AppUserRole } from '../auth/models/jwt.app-user';
+import { UserEntity, UserKey } from '../users/models/users.entity';
+import { UsersService } from '../users/users.service';
 import { wrapEntityList } from '../utils/entity.list';
 import { CreateProblemInput } from './dto/problems.create.input';
 import { ProblemKeyInput } from './dto/problems.key.input';
@@ -10,9 +14,9 @@ import { ProblemsList } from './models/problems.list';
 import { ProblemsService } from './problems.service';
 
 @Resolver(ProblemEntity)
-@RequireAuth(AppUserRole.admin)
+@RequireAuth(AppUserRole.Admin)
 export class ProblemsResolver {
-  constructor(private problemsService: ProblemsService) {}
+  constructor(private problemsService: ProblemsService, private usersService: UsersService) {}
 
   @Query(() => ProblemsList, { name: 'allProblems' })
   async findAll(): Promise<ProblemsList> {
@@ -28,8 +32,10 @@ export class ProblemsResolver {
   }
 
   @Mutation(() => ProblemEntity, { name: 'createProblem' })
-  async create(@Args('input') body: CreateProblemInput): Promise<ProblemEntity> {
-    const item = await this.problemsService.create(body);
+  @RolesRequired(AppUserRole.Instructor)
+  async create(@Args('input') body: CreateProblemInput, @CurrentUser() appUser: AppUser): Promise<ProblemEntity> {
+    const userKey: UserKey = { username: appUser.username };
+    const item = await this.problemsService.create(body, userKey);
     return item;
   }
 
@@ -37,5 +43,11 @@ export class ProblemsResolver {
   async update(@Args('input') { key, patch }: UpdateProblemInput): Promise<ProblemEntity> {
     const item = await this.problemsService.update(key, patch);
     return item;
+  }
+
+  @ResolveField()
+  async author(@Root() prob: ProblemEntity): Promise<UserEntity> {
+    const author = await this.usersService.findOne(prob.author.username);
+    return author!;
   }
 }

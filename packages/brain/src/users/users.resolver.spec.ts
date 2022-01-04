@@ -24,13 +24,13 @@ describe('UsersResolver', () => {
                   new UserEntity({
                     username: 'jane_doe',
                     fullName: 'Jane Doe',
-                    roles: [AppUserRole.admin],
+                    roles: [AppUserRole.Admin],
                     hashedPassword: '**SOME_HASHED_PASSWORD**',
                   }),
                   new UserEntity({
                     username: 'jane_foster',
                     fullName: 'Jane Foster',
-                    roles: [AppUserRole.student],
+                    roles: [AppUserRole.Student],
                     hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
                   }),
                 ],
@@ -64,7 +64,7 @@ describe('UsersResolver', () => {
         expect.objectContaining({
           username: 'jane_doe',
           fullName: 'Jane Doe',
-          roles: [AppUserRole.admin],
+          roles: [AppUserRole.Admin],
           hashedPassword: '**SOME_HASHED_PASSWORD**',
         })
       );

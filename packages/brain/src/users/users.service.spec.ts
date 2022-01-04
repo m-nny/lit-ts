@@ -26,9 +26,7 @@ describe('UsersService', () => {
           } as Partial<UsersRepository>;
         }
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -48,7 +46,7 @@ describe('UsersService', () => {
       const userDto: CreateUser = {
         username: 'jane_doe',
         fullName: 'Jane Doe',
-        roles: [AppUserRole.admin],
+        roles: [AppUserRole.Admin],
         hashedPassword: '**HASHED_PASSWORD**',
       };
       expect(await usersService.create(userDto)).toMatchObject(userDto);
@@ -63,13 +61,13 @@ describe('UsersService', () => {
         {
           username: 'jane_doe',
           fullName: 'Jane Doe',
-          roles: [AppUserRole.admin],
+          roles: [AppUserRole.Admin],
           hashedPassword: '**HASHED_PASSWORD**',
         },
         {
           username: 'jane-foster',
           fullName: 'Jane Foster',
-          roles: [AppUserRole.student],
+          roles: [AppUserRole.Student],
           hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
         },
       ];
@@ -78,7 +76,7 @@ describe('UsersService', () => {
       expect(result[0]).toContainEqual({
         username: 'jane-foster',
         fullName: 'Jane Foster',
-        roles: [AppUserRole.student],
+        roles: [AppUserRole.Student],
         hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
       });
       expect(usersRepo.findAll).toHaveBeenCalled();
@@ -89,7 +87,7 @@ describe('UsersService', () => {
       const user = {
         username: 'jane_doe',
         fullName: 'Jane Doe',
-        roles: [AppUserRole.admin],
+        roles: [AppUserRole.Admin],
         hashedPassword: '**HASHED_PASSWORD**',
       };
       usersRepo.findOne.mockReturnValue(user as any);

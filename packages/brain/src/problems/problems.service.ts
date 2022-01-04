@@ -1,12 +1,14 @@
 import { wrap } from '@mikro-orm/core';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { instanceToPlain, plainToClass } from 'class-transformer';
+import { UserKey } from '../users/models/users.entity';
+import { UsersRepository } from '../users/users.repository';
 import { CreateProblem, ProblemEntity, ProblemKey, UpdateProblem } from './models/problems.entity';
 import { ProblemsRepository } from './problems.repository';
 
 @Injectable()
 export class ProblemsService {
-  constructor(private readonly repo: ProblemsRepository) {}
+  constructor(private readonly repo: ProblemsRepository, private readonly usersRepo: UsersRepository) {}
 
   async findOne(key: ProblemKey): Promise<ProblemEntity | null> {
     const item = await this.repo.findOne(key);
@@ -18,8 +20,10 @@ export class ProblemsService {
     return [items, items.length];
   }
 
-  async create(dto: CreateProblem, flush = true): Promise<ProblemEntity> {
+  async create(dto: CreateProblem, authorKey: UserKey, flush = true): Promise<ProblemEntity> {
+    const author = await this.usersRepo.findOneOrFail(instanceToPlain(authorKey));
     const item = plainToClass(ProblemEntity, dto);
+    item.author = author;
     this.repo.persist(item);
 
     if (flush) {
@@ -29,8 +33,8 @@ export class ProblemsService {
   }
 
   // FIXME(m-nny): there should be a more proper way of creating multiple items
-  async createMultiple(dtos: CreateProblem[]): Promise<ProblemEntity[]> {
-    const items = await Promise.all(dtos.map((item) => this.create(item, false)));
+  async createMultiple(dtos: CreateProblem[], authorKey: UserKey): Promise<ProblemEntity[]> {
+    const items = await Promise.all(dtos.map((item) => this.create(item, authorKey, false)));
     await this.repo.flush();
     return items;
   }

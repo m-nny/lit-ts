@@ -1,5 +1,6 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { UserEntity } from '../../users/models/users.entity';
 import { BaseEntity } from '../../utils/entity.base';
 import { CreateEntity, EntityPK, pickFieldName, UpdateEntity } from '../../utils/entity.utils';
 
@@ -11,11 +12,15 @@ export class ProblemEntity extends BaseEntity {
   public id: number;
 
   @Field()
+  @ManyToOne()
+  public author: UserEntity;
+
+  @Field()
   @Property()
   public title: string;
 }
 
-export const probRelations = []; // pickFieldName(Problem, 'solution');
+export const probRelations = pickFieldName(ProblemEntity, 'author');
 export const probImmutableFields = pickFieldName(ProblemEntity, 'id', ...probRelations);
 export const probOptionalFields = pickFieldName(ProblemEntity, 'id');
 

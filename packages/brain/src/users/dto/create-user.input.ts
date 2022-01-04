@@ -5,11 +5,8 @@ import { CreatePlainUser } from '../models/plain-users.type';
 import { UserEntity } from '../models/users.entity';
 
 @InputType()
-export class CreateUserInput
-  extends createEntityType(UserEntity, ['hashedPassword'])
-  implements CreatePlainUser
-{
-  @Field(() => [AppUserRole], { defaultValue: [AppUserRole.student] })
+export class CreateUserInput extends createEntityType(UserEntity, ['hashedPassword']) implements CreatePlainUser {
+  @Field(() => [AppUserRole], { defaultValue: [AppUserRole.Student] })
   roles: AppUserRole[];
 
   @Field()
