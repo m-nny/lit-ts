@@ -10,6 +10,8 @@ input CreateProblemInput {
 
 input CreateSolutionInput {
   body: String!
+  gradingResult: String
+  gradingStatus: SolutionGradingStatus = InQueue
   id: Int
   problem: ProblemKeyInput!
 }
@@ -30,6 +32,7 @@ type Mutation {
   createProblem(input: CreateProblemInput!): Problem!
   createSolution(input: CreateSolutionInput!): Solution!
   createUser(input: CreateUserInput!): User!
+  gradeSolution(force: Boolean = false, key: SolutionKeyInput!): Solution!
   updateProblem(input: UpdateProblemInput!): Problem!
   updateSolution(input: UpdateSolutionInput!): Solution!
   updateUser(input: UpdateUserInput!): User!
@@ -67,9 +70,17 @@ type Solution {
   author: User!
   body: String!
   createdAt: DateTime!
+  gradingResult: String
+  gradingStatus: SolutionGradingStatus!
   id: Int!
   problem: Problem!
   updatedAt: DateTime!
+}
+
+enum SolutionGradingStatus {
+  Finished
+  InQueue
+  Processing
 }
 
 input SolutionKeyInput {
@@ -98,6 +109,8 @@ input UpdateSolutionInput {
 
 input UpdateSolutionPatchInput {
   body: String
+  gradingResult: String
+  gradingStatus: SolutionGradingStatus = InQueue
 }
 
 input UpdateUserInput {

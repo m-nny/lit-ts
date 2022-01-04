@@ -5,6 +5,7 @@ import { ProblemKey } from '../problems/models/problems.entity';
 import { ProblemsRepository } from '../problems/problems.repository';
 import { UserKey } from '../users/models/users.entity';
 import { UsersRepository } from '../users/users.repository';
+import { GradingStatus } from './models/grading.status';
 import { CreateSolution, SolutionEntity, SolutionKey, UpdateSolution } from './models/solutions.entity';
 import { SolutionsRepository } from './solutions.repository';
 
@@ -22,8 +23,8 @@ export class SolutionsService {
   }
 
   async findAll(): Promise<[SolutionEntity[], number]> {
-    const items = await this.repo.findAll();
-    return [items, items.length];
+    const [items, count] = await this.repo.findAndCount({});
+    return [items, count];
   }
 
   async create(dto: CreateSolution, authorKey: UserKey, problemKey: ProblemKey, flush = true): Promise<SolutionEntity> {
@@ -77,11 +78,11 @@ export class SolutionsService {
   async update(key: SolutionKey, dto: UpdateSolution): Promise<SolutionEntity> {
     const item = await this.repo.findOne(key);
 
-    if (item === null) {
+    if (!item) {
       throw new HttpException(
         {
           message: 'Input data validation failed',
-          errors: { username: 'Solution does not exist' },
+          errors: { id: 'Solution does not exist' },
         },
         HttpStatus.NOT_FOUND
       );
@@ -90,6 +91,39 @@ export class SolutionsService {
     wrap(item).assign(instanceToPlain(dto));
     await this.repo.flush();
 
+    return item;
+  }
+
+  async gradeSolution(solutionKey: SolutionKey, force = false): Promise<SolutionEntity> {
+    console.log({ solutionKey });
+    const item = await this.repo.findOne(instanceToPlain(solutionKey), ['problem']);
+    if (!item) {
+      throw new HttpException(
+        {
+          message: 'Input data validation failed',
+          errors: { id: 'Solution does not exist' },
+        },
+        HttpStatus.NOT_FOUND
+      );
+    }
+    if (!force && item.gradingStatus !== GradingStatus.InQueue) {
+      throw new HttpException(
+        {
+          message: 'Input data validation failed',
+          errors: { gradingStatus: 'Solution is already processed or currently in progress' },
+        },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    item.gradingStatus = GradingStatus.Processing;
+    await this.repo.flush();
+
+    item.gradingResult = 'incorrect';
+    if (item.body === item.problem.solution) {
+      item.gradingResult = 'correct';
+    }
+    item.gradingStatus = GradingStatus.Finished;
+    await this.repo.flush();
     return item;
   }
 }

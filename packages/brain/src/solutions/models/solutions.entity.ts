@@ -1,10 +1,13 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { plainToClass } from 'class-transformer';
 import { ProblemEntity } from '../../problems/models/problems.entity';
 import { UserEntity } from '../../users/models/users.entity';
 import { BaseEntity } from '../../utils/entity.base';
 import { CreateEntity, EntityPK, pickFieldName, UpdateEntity } from '../../utils/entity.utils';
+import { GradingStatus } from './grading.status';
+
+registerEnumType(GradingStatus, { name: 'SolutionGradingStatus' });
 
 @ObjectType('Solution')
 @Entity()
@@ -25,6 +28,14 @@ export class SolutionEntity extends BaseEntity {
   @Property()
   public body: string;
 
+  @Field(() => GradingStatus, { defaultValue: GradingStatus.InQueue })
+  @Property({ type: 'string', default: GradingStatus.InQueue })
+  public gradingStatus: GradingStatus;
+
+  @Field({ nullable: true })
+  @Property({ nullable: true })
+  public gradingResult: string;
+
   static fromPojo(item: CreateSolution, extra?: Partial<SolutionEntity>): SolutionEntity {
     return plainToClass(SolutionEntity, { ...item, ...extra });
   }
@@ -35,7 +46,7 @@ export class SolutionEntity extends BaseEntity {
 
 export const probRelations = pickFieldName(SolutionEntity, 'author', 'problem');
 export const probImmutableFields = pickFieldName(SolutionEntity, 'id', ...probRelations);
-export const probOptionalFields = pickFieldName(SolutionEntity, 'id');
+export const probOptionalFields = pickFieldName(SolutionEntity, 'id', 'gradingResult', 'gradingStatus');
 
 export type SolutionKey = EntityPK<SolutionEntity, 'id'>;
 export type CreateSolution = CreateEntity<

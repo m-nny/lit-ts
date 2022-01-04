@@ -63,4 +63,14 @@ export class SolutionsResolver {
     const problem = await this.probService.findOne(problemKey);
     return problem!;
   }
+
+  @Mutation(() => SolutionEntity, { name: 'gradeSolution' })
+  // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+  async grade(
+    @Args('key') key: SolutionKeyInput,
+    @Args({ name: 'force', defaultValue: false }) force: boolean
+  ): Promise<SolutionEntity> {
+    const item = await this.solutionsService.gradeSolution(key, force);
+    return item;
+  }
 }
