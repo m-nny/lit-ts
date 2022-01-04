@@ -9,5 +9,8 @@
   - [x] role based authentication
 - [ ] [[entities]]
   - [x] user (student/instructor)
-  - [ ] problem
+  - [x] problem
   - [ ] submission
+  - [ ] N + 1
+- [ ] graphql
+  - [ ] move to mercurius

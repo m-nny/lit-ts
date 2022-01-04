@@ -2,6 +2,8 @@
 import { Test } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { UserKey } from '../users/models/users.entity';
+import { UsersRepository } from '../users/users.repository';
 import { CreateProblem, ProblemEntity, ProblemKey } from './models/problems.entity';
 import { ProblemsRepository } from './problems.repository';
 import { ProblemsService } from './problems.service';
@@ -25,6 +27,11 @@ describe('ProblemsService', () => {
             findOne: jest.fn(),
           } as Partial<ProblemsRepository>;
         }
+        if (token === UsersRepository) {
+          return {
+            findOneOrFail: jest.fn((item) => item as any),
+          } as Partial<UsersRepository>;
+        }
         if (typeof token === 'function') {
           const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
@@ -43,8 +50,13 @@ describe('ProblemsService', () => {
 
   describe('create', () => {
     it('should create a new problem', async () => {
-      const problemDto: CreateProblem = { id: 1, title: 'P = NP' };
-      expect(await problemsService.create(problemDto)).toMatchObject(problemDto);
+      const problemDto: CreateProblem = { id: 1, title: 'P = NP', solution: 'maybe' };
+      const problemAuthor: UserKey = { username: 'jane_doe' };
+
+      const problem = await problemsService.create(problemDto, problemAuthor);
+
+      expect(problem).toMatchObject(problemDto);
+      expect(problem?.author).toMatchObject(problemAuthor);
       expect(problemsRepo.persist).toHaveBeenCalled();
       expect(problemsRepo.flush).toHaveBeenCalled();
     });

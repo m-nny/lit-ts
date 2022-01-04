@@ -18,6 +18,10 @@ export class ProblemEntity extends BaseEntity {
   @Field()
   @Property()
   public title: string;
+
+  @Field()
+  @Property()
+  public solution: string;
 }
 
 export const probRelations = pickFieldName(ProblemEntity, 'author');
