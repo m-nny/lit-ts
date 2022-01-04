@@ -1,6 +1,6 @@
 import { wrap } from '@mikro-orm/core';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { instanceToPlain, plainToClass } from 'class-transformer';
+import { instanceToPlain } from 'class-transformer';
 import { UserKey } from '../users/models/users.entity';
 import { UsersRepository } from '../users/users.repository';
 import { CreateProblem, ProblemEntity, ProblemKey, UpdateProblem } from './models/problems.entity';
@@ -22,7 +22,8 @@ export class ProblemsService {
 
   async create(dto: CreateProblem, authorKey: UserKey, flush = true): Promise<ProblemEntity> {
     const author = await this.usersRepo.findOneOrFail(instanceToPlain(authorKey));
-    const item = plainToClass(ProblemEntity, dto);
+
+    const item = ProblemEntity.fromPojo(dto);
     item.author = author;
     this.repo.persist(item);
 
@@ -39,13 +40,12 @@ export class ProblemsService {
     return items;
   }
 
-  async upsert(dto: CreateProblem, flush = true): Promise<ProblemEntity> {
+  async upsert(dto: CreateProblem, authorKey: UserKey, flush = true): Promise<ProblemEntity> {
     const { id } = dto;
     let item = await this.repo.findOne({ id });
 
     if (item === null) {
-      item = plainToClass(ProblemEntity, dto);
-      this.repo.persist(item);
+      item = await this.create(dto, authorKey, false);
     } else {
       wrap(item).assign(instanceToPlain(dto));
     }
@@ -57,8 +57,8 @@ export class ProblemsService {
     return item;
   }
 
-  async upsertMultiple(dtos: CreateProblem[]): Promise<ProblemEntity[]> {
-    const items = await Promise.all(dtos.map((item) => this.upsert(item, false)));
+  async upsertMultiple(dtos: CreateProblem[], authorKey: UserKey): Promise<ProblemEntity[]> {
+    const items = await Promise.all(dtos.map((item) => this.upsert(item, authorKey, false)));
     await this.repo.flush();
     return items;
   }

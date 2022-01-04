@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test } from '@nestjs/testing';
-import { plainToClass } from 'class-transformer';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { UserKey } from '../users/models/users.entity';
 import { UsersRepository } from '../users/users.repository';
@@ -64,22 +63,25 @@ describe('ProblemsService', () => {
 
   describe('findAll', () => {
     it('should find all problems', async () => {
-      const problems = [
-        { id: 1, title: 'P = NP' },
-        { id: 2, title: 'n factorial' },
-      ];
+      const problems = ProblemEntity.fromPojos([
+        { id: 1, title: 'P = NP', solution: 'maybe' },
+        { id: 2, title: 'n factorial', solution: 'maybe' },
+      ]);
       problemsRepo.findAll.mockReturnValue(problems as any);
+
       const result = await problemsService.findAll();
-      expect(result[0]).toContainEqual({ id: 1, title: 'P = NP' });
+      expect(result[0]).toContainEqual(expect.objectContaining({ id: 1, title: 'P = NP' }));
       expect(problemsRepo.findAll).toHaveBeenCalled();
     });
   });
   describe('findOne', () => {
     it('should find a problem', async () => {
-      const problem = plainToClass(ProblemEntity, { id: 1, title: 'P = NP' });
+      const problem = ProblemEntity.fromPojo({ id: 1, title: 'P = NP', solution: 'maybe' });
       const problemKey: ProblemKey = { id: problem.id };
       problemsRepo.findOne.mockReturnValue(problem as any);
+
       const result = await problemsService.findOne(problemKey);
+
       expect(result).toMatchObject(problem);
       expect(problemsRepo.findOne).toHaveBeenCalled();
     });

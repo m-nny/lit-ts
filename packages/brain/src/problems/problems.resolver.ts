@@ -25,8 +25,7 @@ export class ProblemsResolver {
   }
 
   @Query(() => ProblemEntity, { name: 'problemByKey', nullable: true })
-  async findById(@Args() key: ProblemKeyInput): Promise<ProblemEntity | null> {
-    console.log({ key });
+  async findById(@Args('key') key: ProblemKeyInput): Promise<ProblemEntity | null> {
     const item = await this.problemsService.findOne(key);
     return item;
   }
@@ -47,7 +46,8 @@ export class ProblemsResolver {
 
   @ResolveField()
   async author(@Root() prob: ProblemEntity): Promise<UserEntity> {
-    const author = await this.usersService.findOne(prob.author.username);
+    const authorKey: UserKey = { username: prob.author.username };
+    const author = await this.usersService.findOne(authorKey);
     return author!;
   }
 }

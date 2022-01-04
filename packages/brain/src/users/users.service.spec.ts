@@ -2,7 +2,7 @@
 import { Test } from '@nestjs/testing';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AppUserRole } from '../auth/models/jwt.app-user';
-import { CreateUser } from './models/users.entity';
+import { CreateUser, UserEntity } from './models/users.entity';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
@@ -57,7 +57,7 @@ describe('UsersService', () => {
 
   describe('findAll', () => {
     it('should find all users', async () => {
-      const users = [
+      const users = UserEntity.fromPojos([
         {
           username: 'jane_doe',
           fullName: 'Jane Doe',
@@ -70,28 +70,33 @@ describe('UsersService', () => {
           roles: [AppUserRole.Student],
           hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
         },
-      ];
+      ]);
       usersRepo.findAll.mockReturnValue(users as any);
       const result = await usersService.findAll();
-      expect(result[0]).toContainEqual({
-        username: 'jane-foster',
-        fullName: 'Jane Foster',
-        roles: [AppUserRole.Student],
-        hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
-      });
+      expect(result[0]).toContainEqual(
+        expect.objectContaining({
+          username: 'jane-foster',
+          fullName: 'Jane Foster',
+          roles: [AppUserRole.Student],
+          hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
+        })
+      );
       expect(usersRepo.findAll).toHaveBeenCalled();
     });
   });
   describe('findOne', () => {
     it('should find a user', async () => {
-      const user = {
+      const user = UserEntity.fromPojo({
         username: 'jane_doe',
         fullName: 'Jane Doe',
         roles: [AppUserRole.Admin],
         hashedPassword: '**HASHED_PASSWORD**',
-      };
+      });
+      const userKey = { username: user.username };
       usersRepo.findOne.mockReturnValue(user as any);
-      const result = await usersService.findOne(user.username);
+
+      const result = await usersService.findOne(userKey);
+
       expect(result).toMatchObject(user);
       expect(usersRepo.findOne).toHaveBeenCalled();
     });

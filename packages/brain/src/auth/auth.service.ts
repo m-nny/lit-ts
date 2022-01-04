@@ -7,25 +7,14 @@ import { AppUser } from './models/jwt.app-user';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-    private bcrypt: BcryptService
-  ) {}
+  constructor(private usersService: UsersService, private jwtService: JwtService, private bcrypt: BcryptService) {}
 
-  private async validateUserCredentials(
-    userCredentials: UserCredentials
-  ): Promise<AppUser | null> {
-    const hashedUser = await this.usersService.findOne(
-      userCredentials.username
-    );
+  private async validateUserCredentials(userCredentials: UserCredentials): Promise<AppUser | null> {
+    const hashedUser = await this.usersService.findOne({ username: userCredentials.username });
     if (!hashedUser) {
       return null;
     }
-    const isPasswordCorrect = await this.bcrypt.checkUser(
-      userCredentials,
-      hashedUser
-    );
+    const isPasswordCorrect = await this.bcrypt.checkUser(userCredentials, hashedUser);
     if (!isPasswordCorrect) {
       return null;
     }

@@ -10,6 +10,6 @@ import { SolutionsService } from './solutions.service';
 @Module({
   imports: [MikroOrmModule.forFeature([SolutionEntity]), ConfigModule, UsersModule, ProblemsModule],
   providers: [SolutionsService, SolutionsResolver],
-  exports: [],
+  exports: [MikroOrmModule.forFeature([SolutionEntity]), SolutionsService],
 })
 export class SolutionsModule {}

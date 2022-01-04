@@ -4,7 +4,14 @@
 
 input CreateProblemInput {
   id: Int
+  solution: String!
   title: String!
+}
+
+input CreateSolutionInput {
+  body: String!
+  id: Int
+  problem: ProblemKeyInput!
 }
 
 input CreateUserInput {
@@ -21,8 +28,10 @@ scalar DateTime
 
 type Mutation {
   createProblem(input: CreateProblemInput!): Problem!
+  createSolution(input: CreateSolutionInput!): Solution!
   createUser(input: CreateUserInput!): User!
   updateProblem(input: UpdateProblemInput!): Problem!
+  updateSolution(input: UpdateSolutionInput!): Solution!
   updateUser(input: UpdateUserInput!): User!
 }
 
@@ -30,6 +39,7 @@ type Problem {
   author: User!
   createdAt: DateTime!
   id: Int!
+  solution: String!
   title: String!
   updatedAt: DateTime!
 }
@@ -45,10 +55,30 @@ type ProblemsList {
 
 type Query {
   allProblems: ProblemsList!
+  allSolutions: SolutionsList!
   allUsers: UsersList!
-  problemByKey: Problem
-  userByKey(username: String!): User
+  problemByKey(key: ProblemKeyInput!): Problem
+  solutionByKey(key: SolutionKeyInput!): Solution
+  userByKey(key: UserKeyInput!): User
   whoAmI: User
+}
+
+type Solution {
+  author: User!
+  body: String!
+  createdAt: DateTime!
+  id: Int!
+  problem: Problem!
+  updatedAt: DateTime!
+}
+
+input SolutionKeyInput {
+  id: Int!
+}
+
+type SolutionsList {
+  items: [Solution!]!
+  length: Int!
 }
 
 input UpdateProblemInput {
@@ -57,7 +87,17 @@ input UpdateProblemInput {
 }
 
 input UpdateProblemPatchInput {
+  solution: String
   title: String
+}
+
+input UpdateSolutionInput {
+  key: SolutionKeyInput!
+  patch: UpdateSolutionPatchInput!
+}
+
+input UpdateSolutionPatchInput {
+  body: String
 }
 
 input UpdateUserInput {

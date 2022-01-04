@@ -20,20 +20,20 @@ describe('UsersResolver', () => {
           return {
             findAll: jest.fn(
               async (): Promise<[UserEntity[], number]> => [
-                [
-                  new UserEntity({
+                UserEntity.fromPojos([
+                  {
                     username: 'jane_doe',
                     fullName: 'Jane Doe',
                     roles: [AppUserRole.Admin],
                     hashedPassword: '**SOME_HASHED_PASSWORD**',
-                  }),
-                  new UserEntity({
+                  },
+                  {
                     username: 'jane_foster',
                     fullName: 'Jane Foster',
                     roles: [AppUserRole.Student],
                     hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
-                  }),
-                ],
+                  },
+                ]),
                 2,
               ]
             ),

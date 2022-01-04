@@ -3,6 +3,8 @@ import { RequireAuth } from '../auth/decorators/auth.decorator';
 import { RolesRequired } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/guards/jwt.guard';
 import { AppUser, AppUserRole } from '../auth/models/jwt.app-user';
+import { ProblemEntity, ProblemKey } from '../problems/models/problems.entity';
+import { ProblemsService } from '../problems/problems.service';
 import { UserEntity, UserKey } from '../users/models/users.entity';
 import { UsersService } from '../users/users.service';
 import { wrapEntityList } from '../utils/entity.list';
@@ -16,7 +18,11 @@ import { SolutionsService } from './solutions.service';
 @Resolver(SolutionEntity)
 @RequireAuth(AppUserRole.Admin)
 export class SolutionsResolver {
-  constructor(private solutionsService: SolutionsService, private usersService: UsersService) {}
+  constructor(
+    private solutionsService: SolutionsService,
+    private usersService: UsersService,
+    private readonly probService: ProblemsService
+  ) {}
 
   @Query(() => SolutionsList, { name: 'allSolutions' })
   async findAll(): Promise<SolutionsList> {
@@ -25,8 +31,7 @@ export class SolutionsResolver {
   }
 
   @Query(() => SolutionEntity, { name: 'solutionByKey', nullable: true })
-  async findById(@Args() key: SolutionKeyInput): Promise<SolutionEntity | null> {
-    console.log({ key });
+  async findById(@Args('key') key: SolutionKeyInput): Promise<SolutionEntity | null> {
     const item = await this.solutionsService.findOne(key);
     return item;
   }
@@ -46,8 +51,16 @@ export class SolutionsResolver {
   }
 
   @ResolveField()
-  async author(@Root() prob: SolutionEntity): Promise<UserEntity> {
-    const author = await this.usersService.findOne(prob.author.username);
+  async author(@Root() item: SolutionEntity): Promise<UserEntity> {
+    const authorKey: UserKey = { username: item.author.username };
+    const author = await this.usersService.findOne(authorKey);
     return author!;
+  }
+
+  @ResolveField()
+  async problem(@Root() item: SolutionEntity): Promise<ProblemEntity> {
+    const problemKey: ProblemKey = { id: item.problem.id };
+    const problem = await this.probService.findOne(problemKey);
+    return problem!;
   }
 }

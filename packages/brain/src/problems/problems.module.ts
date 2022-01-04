@@ -9,6 +9,6 @@ import { ProblemsService } from './problems.service';
 @Module({
   imports: [MikroOrmModule.forFeature([ProblemEntity]), ConfigModule, UsersModule],
   providers: [ProblemsService, ProblemsResolver],
-  exports: [],
+  exports: [MikroOrmModule.forFeature([ProblemEntity]), ProblemsService],
 })
 export class ProblemsModule {}

@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { plainToClass } from 'class-transformer';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { ProblemEntity } from './models/problems.entity';
 import { ProblemsResolver } from './problems.resolver';
@@ -20,10 +19,10 @@ describe('ProblemsResolver', () => {
           return {
             findAll: jest.fn(
               async (): Promise<[ProblemEntity[], number]> => [
-                [
-                  plainToClass(ProblemEntity, { id: 1, title: 'P = NP' }),
-                  plainToClass(ProblemEntity, { id: 2, title: 'n factorial' }),
-                ],
+                ProblemEntity.fromPojos([
+                  { id: 1, title: 'P = NP', solution: 'maybe' },
+                  { id: 2, title: 'n factorial', solution: 'idk' },
+                ]),
                 2,
               ]
             ),

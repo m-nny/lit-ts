@@ -1,5 +1,6 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { plainToClass } from 'class-transformer';
 import { UserEntity } from '../../users/models/users.entity';
 import { BaseEntity } from '../../utils/entity.base';
 import { CreateEntity, EntityPK, pickFieldName, UpdateEntity } from '../../utils/entity.utils';
@@ -22,6 +23,13 @@ export class ProblemEntity extends BaseEntity {
   @Field()
   @Property()
   public solution: string;
+
+  static fromPojo(item: CreateProblem, extra?: Partial<ProblemEntity>): ProblemEntity {
+    return plainToClass(ProblemEntity, { ...item, ...extra });
+  }
+  static fromPojos(items: CreateProblem[], extra?: Partial<ProblemEntity>): ProblemEntity[] {
+    return items.map((item) => ProblemEntity.fromPojo(item, extra));
+  }
 }
 
 export const probRelations = pickFieldName(ProblemEntity, 'author');
