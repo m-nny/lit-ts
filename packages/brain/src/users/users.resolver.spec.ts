@@ -1,9 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { plainToClass } from 'class-transformer';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AppUserRole } from '../auth/models/jwt.app-user';
 import { UserEntity } from './models/users.entity';
-import { UsersList } from './models/users.list';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
@@ -36,20 +34,19 @@ describe('UsersResolver', () => {
                     hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
                   }),
                 ],
-                0,
+                2,
               ]
             ),
           } as Partial<UsersService>;
         }
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
       })
       .compile();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     usersService = moduleRef.get(UsersService);
     usersResolver = moduleRef.get(UsersResolver);
   });

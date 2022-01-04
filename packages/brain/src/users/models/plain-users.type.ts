@@ -12,7 +12,4 @@ export type UserCredentials = { username: string; plainPassword: string };
 export type CreatePlainUser = CreateEntity<PlainUser, 'toAppUser'>;
 export type UpdatePlainUser = UpdateEntity<PlainUser, 'username' | 'toAppUser'>;
 
-export type UpdateHasedUser = UpdateEntity<
-  HashedUser,
-  'username' | 'toAppUser'
->;
+export type UpdateHasedUser = UpdateEntity<HashedUser, 'username' | 'toAppUser'>;
