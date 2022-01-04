@@ -2,10 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateProblemInput {
+  id: Int
+  solution: String!
+  title: String!
+}
+
+input CreateSolutionInput {
+  body: String!
+  id: Int
+  problem: ProblemKeyInput!
+}
+
 input CreateUserInput {
   fullName: String!
   plainPassword: String!
-  roles: [UserRole!] = [student]
+  roles: [UserRole!] = [Student]
   username: String!
 }
 
@@ -15,14 +27,77 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  createProblem(input: CreateProblemInput!): Problem!
+  createSolution(input: CreateSolutionInput!): Solution!
   createUser(input: CreateUserInput!): User!
+  updateProblem(input: UpdateProblemInput!): Problem!
+  updateSolution(input: UpdateSolutionInput!): Solution!
   updateUser(input: UpdateUserInput!): User!
 }
 
+type Problem {
+  author: User!
+  createdAt: DateTime!
+  id: Int!
+  solution: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input ProblemKeyInput {
+  id: Int!
+}
+
+type ProblemsList {
+  items: [Problem!]!
+  length: Int!
+}
+
 type Query {
+  allProblems: ProblemsList!
+  allSolutions: SolutionsList!
   allUsers: UsersList!
-  userByKey(username: String!): User
+  problemByKey(key: ProblemKeyInput!): Problem
+  solutionByKey(key: SolutionKeyInput!): Solution
+  userByKey(key: UserKeyInput!): User
   whoAmI: User
+}
+
+type Solution {
+  author: User!
+  body: String!
+  createdAt: DateTime!
+  id: Int!
+  problem: Problem!
+  updatedAt: DateTime!
+}
+
+input SolutionKeyInput {
+  id: Int!
+}
+
+type SolutionsList {
+  items: [Solution!]!
+  length: Int!
+}
+
+input UpdateProblemInput {
+  key: ProblemKeyInput!
+  patch: UpdateProblemPatchInput!
+}
+
+input UpdateProblemPatchInput {
+  solution: String
+  title: String
+}
+
+input UpdateSolutionInput {
+  key: SolutionKeyInput!
+  patch: UpdateSolutionPatchInput!
+}
+
+input UpdateSolutionPatchInput {
+  body: String
 }
 
 input UpdateUserInput {
@@ -48,8 +123,9 @@ input UserKeyInput {
 }
 
 enum UserRole {
-  admin
-  student
+  Admin
+  Instructor
+  Student
 }
 
 type UsersList {

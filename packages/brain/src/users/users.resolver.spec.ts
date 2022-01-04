@@ -1,9 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { plainToClass } from 'class-transformer';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AppUserRole } from '../auth/models/jwt.app-user';
 import { UserEntity } from './models/users.entity';
-import { UsersList } from './models/users.list';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
@@ -22,34 +20,33 @@ describe('UsersResolver', () => {
           return {
             findAll: jest.fn(
               async (): Promise<[UserEntity[], number]> => [
-                [
-                  new UserEntity({
+                UserEntity.fromPojos([
+                  {
                     username: 'jane_doe',
                     fullName: 'Jane Doe',
-                    roles: [AppUserRole.admin],
+                    roles: [AppUserRole.Admin],
                     hashedPassword: '**SOME_HASHED_PASSWORD**',
-                  }),
-                  new UserEntity({
+                  },
+                  {
                     username: 'jane_foster',
                     fullName: 'Jane Foster',
-                    roles: [AppUserRole.student],
+                    roles: [AppUserRole.Student],
                     hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
-                  }),
-                ],
-                0,
+                  },
+                ]),
+                2,
               ]
             ),
           } as Partial<UsersService>;
         }
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
       })
       .compile();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     usersService = moduleRef.get(UsersService);
     usersResolver = moduleRef.get(UsersResolver);
   });
@@ -67,7 +64,7 @@ describe('UsersResolver', () => {
         expect.objectContaining({
           username: 'jane_doe',
           fullName: 'Jane Doe',
-          roles: [AppUserRole.admin],
+          roles: [AppUserRole.Admin],
           hashedPassword: '**SOME_HASHED_PASSWORD**',
         })
       );

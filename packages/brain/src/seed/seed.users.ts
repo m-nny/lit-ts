@@ -11,21 +11,16 @@ const mockUsers: CreatePlainUser[] = [
     username: 'jane_doe',
     fullName: 'Jane Doe',
     plainPassword: 'super_secret_password',
-    roles: [AppUserRole.admin],
+    roles: [AppUserRole.Admin],
   },
 ];
 
 @Injectable()
 export class SeedUsersService {
   private logger = new Logger(SeedUsersService.name);
-  public constructor(
-    private usersService: UsersService,
-    private bcrypt: BcryptService
-  ) {}
+  public constructor(private usersService: UsersService, private bcrypt: BcryptService) {}
   public async seed() {
-    const plainUsers = mockUsers.map((user) =>
-      plainToClass(CreateUserInput, user)
-    );
+    const plainUsers = mockUsers.map((user) => plainToClass(CreateUserInput, user));
     const hashedUsers = await this.bcrypt.hashUsers(plainUsers);
     const users = await this.usersService.upsertMultiple(hashedUsers);
     this.logger.log(`Created ${users.length} users`);

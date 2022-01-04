@@ -1,5 +1,6 @@
 import { Entity, JsonType, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { plainToClass } from 'class-transformer';
 import { AppUser, AppUserRole } from '../../auth/models/jwt.app-user';
 import { BaseEntity } from '../../utils/entity.base';
 import { CreateEntity, EntityPK, UpdateEntity } from '../../utils/entity.utils';
@@ -24,15 +25,12 @@ export class UserEntity extends BaseEntity {
   @Property({ type: JsonType })
   roles: AppUserRole[];
 
-  //FIXME(m-nny): maybe add class-tranformator(?)
-  constructor(dto: CreateUser) {
-    super();
-    this.username = dto.username;
-    this.fullName = dto.fullName;
-    this.hashedPassword = dto.hashedPassword;
-    this.roles = dto.roles;
+  static fromPojo(item: CreateUser, extra?: Partial<UserEntity>): UserEntity {
+    return plainToClass(UserEntity, { ...item, ...extra });
   }
-
+  static fromPojos(items: CreateUser[], extra?: Partial<UserEntity>): UserEntity[] {
+    return items.map((item) => UserEntity.fromPojo(item, extra));
+  }
   toAppUser(): AppUser {
     return {
       username: this.username,

@@ -1,7 +1,7 @@
 import { ArgsType, InputType } from '@nestjs/graphql';
 import { entityPKType } from '../../utils/entity.utils';
-import { UserEntity } from '../models/users.entity';
+import { ProblemEntity } from '../models/problems.entity';
 
 @InputType()
 @ArgsType()
-export class UserKeyInput extends entityPKType(UserEntity, ['username']) {}
+export class ProblemKeyInput extends entityPKType(ProblemEntity, ['id']) {}

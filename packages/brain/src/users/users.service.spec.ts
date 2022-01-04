@@ -2,7 +2,7 @@
 import { Test } from '@nestjs/testing';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AppUserRole } from '../auth/models/jwt.app-user';
-import { CreateUser } from './models/users.entity';
+import { CreateUser, UserEntity } from './models/users.entity';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
@@ -26,9 +26,7 @@ describe('UsersService', () => {
           } as Partial<UsersRepository>;
         }
         if (typeof token === 'function') {
-          const mockMetadata = moduleMocker.getMetadata(
-            token
-          ) as MockFunctionMetadata<any, any>;
+          const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
           const Mock = moduleMocker.generateFromMetadata(mockMetadata);
           return new Mock();
         }
@@ -48,7 +46,7 @@ describe('UsersService', () => {
       const userDto: CreateUser = {
         username: 'jane_doe',
         fullName: 'Jane Doe',
-        roles: [AppUserRole.admin],
+        roles: [AppUserRole.Admin],
         hashedPassword: '**HASHED_PASSWORD**',
       };
       expect(await usersService.create(userDto)).toMatchObject(userDto);
@@ -59,41 +57,46 @@ describe('UsersService', () => {
 
   describe('findAll', () => {
     it('should find all users', async () => {
-      const users = [
+      const users = UserEntity.fromPojos([
         {
           username: 'jane_doe',
           fullName: 'Jane Doe',
-          roles: [AppUserRole.admin],
+          roles: [AppUserRole.Admin],
           hashedPassword: '**HASHED_PASSWORD**',
         },
         {
           username: 'jane-foster',
           fullName: 'Jane Foster',
-          roles: [AppUserRole.student],
+          roles: [AppUserRole.Student],
           hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
         },
-      ];
+      ]);
       usersRepo.findAll.mockReturnValue(users as any);
       const result = await usersService.findAll();
-      expect(result[0]).toContainEqual({
-        username: 'jane-foster',
-        fullName: 'Jane Foster',
-        roles: [AppUserRole.student],
-        hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
-      });
+      expect(result[0]).toContainEqual(
+        expect.objectContaining({
+          username: 'jane-foster',
+          fullName: 'Jane Foster',
+          roles: [AppUserRole.Student],
+          hashedPassword: '**ANOTHER_HASHED_PASSWORD**',
+        })
+      );
       expect(usersRepo.findAll).toHaveBeenCalled();
     });
   });
   describe('findOne', () => {
     it('should find a user', async () => {
-      const user = {
+      const user = UserEntity.fromPojo({
         username: 'jane_doe',
         fullName: 'Jane Doe',
-        roles: [AppUserRole.admin],
+        roles: [AppUserRole.Admin],
         hashedPassword: '**HASHED_PASSWORD**',
-      };
+      });
+      const userKey = { username: user.username };
       usersRepo.findOne.mockReturnValue(user as any);
-      const result = await usersService.findOne(user.username);
+
+      const result = await usersService.findOne(userKey);
+
       expect(result).toMatchObject(user);
       expect(usersRepo.findOne).toHaveBeenCalled();
     });

@@ -1,15 +1,15 @@
 import { wrap } from '@mikro-orm/core';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
-import { CreateUser, UpdateUser, UserEntity } from './models/users.entity';
+import { CreateUser, UpdateUser, UserEntity, UserKey } from './models/users.entity';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly repo: UsersRepository) {}
 
-  async findOne(username: string): Promise<UserEntity | null> {
-    const item = await this.repo.findOne({ username: username });
+  async findOne(key: UserKey): Promise<UserEntity | null> {
+    const item = await this.repo.findOne(instanceToPlain(key));
     return item;
   }
 
@@ -19,7 +19,7 @@ export class UsersService {
   }
 
   async create(dto: CreateUser, flush = true): Promise<UserEntity> {
-    const item = new UserEntity(dto);
+    const item = UserEntity.fromPojo(dto);
 
     this.repo.persist(item);
     if (flush) {
@@ -30,9 +30,7 @@ export class UsersService {
 
   // FIXME(m-nny): there should be a more proper way of creating multiple items
   async createMultiple(dtos: CreateUser[]): Promise<UserEntity[]> {
-    const items = await Promise.all(
-      dtos.map((item) => this.create(item, false))
-    );
+    const items = await Promise.all(dtos.map((item) => this.create(item, false)));
     await this.repo.flush();
     return items;
   }
@@ -42,8 +40,7 @@ export class UsersService {
     let item = await this.repo.findOne({ username });
 
     if (item === null) {
-      item = new UserEntity(dto);
-      this.repo.persist(item);
+      item = await this.create(dto, false);
     } else {
       wrap(item).assign(instanceToPlain(dto));
     }
@@ -56,9 +53,7 @@ export class UsersService {
   }
 
   async upsertMultiple(dtos: CreateUser[]): Promise<UserEntity[]> {
-    const items = await Promise.all(
-      dtos.map((item) => this.upsert(item, false))
-    );
+    const items = await Promise.all(dtos.map((item) => this.upsert(item, false)));
     await this.repo.flush();
     return items;
   }
