@@ -25,6 +25,7 @@ describe('SolutionsService', () => {
             persist: jest.fn(),
             flush: jest.fn(),
             findAll: jest.fn(),
+            findAndCount: jest.fn(),
             findOne: jest.fn(),
           } as Partial<SolutionsRepository>;
         }
@@ -76,12 +77,12 @@ describe('SolutionsService', () => {
         { id: 10, body: 'maybe' },
         { id: 20, body: 'idk' },
       ]);
-      solutionsRepo.findAll.mockReturnValue(solutions as any);
+      solutionsRepo.findAndCount.mockReturnValue([solutions, solutions.length] as any);
 
       const result = await solutionsService.findAll();
 
       expect(result[0]).toContainEqual(expect.objectContaining({ id: 10, body: 'maybe' }));
-      expect(solutionsRepo.findAll).toHaveBeenCalled();
+      expect(solutionsRepo.findAndCount).toHaveBeenCalled();
     });
   });
   describe('findOne', () => {
