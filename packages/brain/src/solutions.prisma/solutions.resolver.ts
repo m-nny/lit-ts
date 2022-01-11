@@ -1,4 +1,6 @@
 import { Args, Mutation, Query, ResolveField, Resolver, Root } from '@nestjs/graphql';
+import { RequireAuth } from '../auth/decorators/auth.decorator';
+import { AppUserRole } from '../auth/models/jwt.app-user';
 import { ProblemEntity } from '../problems.prisma/models/problems.entity';
 import { ProblemsPrismaService } from '../problems.prisma/problems.service';
 import { UserEntity } from '../users.prisma/models/users.entity';
@@ -11,6 +13,7 @@ import { SolutionsList } from './models/solutions.list';
 import { SolutionsPrismaService } from './solutions.service';
 
 @Resolver(() => SolutionEntity)
+@RequireAuth(AppUserRole.Admin)
 export class SolutionsPrismaResolver {
   constructor(
     private readonly solutionsService: SolutionsPrismaService,

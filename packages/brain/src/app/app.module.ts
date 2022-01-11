@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from '../config/config.module';
 import { GraphqlModule } from '../graphql/graphql.module';
 import { PrismaModule } from '../prisma/prisma.module';
@@ -14,13 +15,7 @@ import { UsersPrismaModule } from '../users.prisma/users.module';
     UsersPrismaModule,
     ProblemsPrismaModule,
     SolutionsPrismaModule,
-    // MikroOrmModule,
-    // AuthModule,
-    // SeedModule,
-    // // DB Entities
-    // UsersModule,
-    // ProblemsModule,
-    // SolutionsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

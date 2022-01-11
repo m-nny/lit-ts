@@ -59,6 +59,7 @@ type Query {
   getUserById(key: UserKeyInput!): User
   getUsers: UsersList!
   helloWorld: String!
+  whoAmI: User!
 }
 
 type Solution {

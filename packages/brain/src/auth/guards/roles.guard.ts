@@ -13,7 +13,7 @@ export class AppRoleGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredRoles) {
+    if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
     const { user } = getExpressRequestFromContext(context);

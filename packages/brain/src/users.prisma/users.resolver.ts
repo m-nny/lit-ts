@@ -1,4 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { RequireAuth } from '../auth/decorators/auth.decorator';
+import { CurrentUser } from '../auth/guards/jwt.guard';
+import { AppUser, AppUserRole } from '../auth/models/jwt.app-user';
 import { wrapEntityList } from '../utils/entity.list';
 import { CreateUserInput } from './dto/users.create.input';
 import { UserKeyInput } from './dto/users.key.input';
@@ -7,6 +10,7 @@ import { UsersList } from './models/users.list';
 import { UsersPrismaService } from './users.service';
 
 @Resolver(() => UserEntity)
+@RequireAuth(AppUserRole.Admin)
 export class UsersPrismaResolver {
   constructor(private readonly usersService: UsersPrismaService) {}
 
@@ -28,8 +32,15 @@ export class UsersPrismaResolver {
     return item;
   }
 
+  @RequireAuth(AppUserRole.Student)
   @Query(() => String)
   async helloWorld() {
     return 'Hello, world';
+  }
+  @RequireAuth(AppUserRole.Student)
+  @Query(() => UserEntity)
+  async whoAmI(@CurrentUser() { username }: AppUser): Promise<UserEntity> {
+    const user = await this.usersService.findOne({ username });
+    return user!;
   }
 }
