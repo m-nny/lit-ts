@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { GraphqlModule } from '../graphql/graphql.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ProblemsPrismaModule } from '../problems.prisma/problems.module';
 import { UsersPrismaModule } from '../users.prisma/users.module';
 
 @Module({
@@ -10,6 +11,7 @@ import { UsersPrismaModule } from '../users.prisma/users.module';
     ConfigModule,
     PrismaModule,
     UsersPrismaModule,
+    ProblemsPrismaModule,
     // MikroOrmModule,
     // AuthModule,
     // SeedModule,

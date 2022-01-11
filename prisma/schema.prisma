@@ -36,6 +36,7 @@ model User {
 model Problem {
   id    Int    @id @default(autoincrement())
   title String
+  // correntSolution String
 
   author         User   @relation(fields: [authorUsername], references: [username])
   authorUsername String
