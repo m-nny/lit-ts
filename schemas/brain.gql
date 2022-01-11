@@ -15,24 +15,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
-  createUser(input: CreateUserInput!): User2!
+  createUser(input: CreateUserInput!): User!
 }
 
 type Query {
-  getUserById(key: UserKeyInput!): User2
-  getUsers: [UsersList!]!
+  getUserById(key: UserKeyInput!): User
+  getUsers: UsersList!
   helloWorld: String!
 }
 
 type User {
-  createdAt: DateTime!
-  fullName: String!
-  roles: [UserRole!]!
-  updatedAt: DateTime!
-  username: String!
-}
-
-type User2 {
   createdAt: DateTime!
   fullName: String!
   role: UserRole!
@@ -50,7 +42,15 @@ enum UserRole {
   Student
 }
 
+type User_old {
+  createdAt: DateTime!
+  fullName: String!
+  roles: [UserRole!]!
+  updatedAt: DateTime!
+  username: String!
+}
+
 type UsersList {
-  items: [User2!]!
+  items: [User!]!
   length: Int!
 }

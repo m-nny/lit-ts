@@ -4,8 +4,8 @@ import { AppUserRole } from '../../auth/models/jwt.app-user';
 
 registerEnumType(AppUserRole, { name: 'UserRole' });
 
-@ObjectType('User2')
-export class UsersEntity implements UserModel {
+@ObjectType('User')
+export class UserEntity implements UserModel {
   @Field()
   username: string;
 

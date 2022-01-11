@@ -7,7 +7,7 @@ import { CreateEntity, EntityPK, UpdateEntity } from '../../utils/entity.utils';
 
 registerEnumType(AppUserRole, { name: 'UserRole' });
 
-@ObjectType('User')
+@ObjectType('User_old')
 @Entity()
 export class UserEntity extends BaseEntity {
   @Field()
