@@ -6,10 +6,10 @@ export type EntityList<E> = {
   items: E[];
 };
 
-export const wrapEntityList = <E>(
-  items: E[],
-  length?: number
-): EntityList<E> => ({ items, length: length ?? items.length });
+export const wrapEntityList = <E>(items: E[], length: number | null): EntityList<E> => ({
+  items,
+  length: length ?? items.length,
+});
 
 export function entityList<E>(classRef: Type<E>): Type<EntityList<E>> {
   const { name } = classRef;
@@ -29,9 +29,7 @@ export type CreateMultipleEntites<E> = {
   items: E[];
 };
 
-export function createMultipleEntites<E>(
-  classRef: Type<E>
-): Type<CreateMultipleEntites<E>> {
+export function createMultipleEntites<E>(classRef: Type<E>): Type<CreateMultipleEntites<E>> {
   const { name } = classRef;
 
   @InputType(`CreateMultiple${name}Input`)

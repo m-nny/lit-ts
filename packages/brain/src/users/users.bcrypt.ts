@@ -1,13 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { ConfigWrapper } from '../config/config.wrapper';
-import {
-  HashedUser,
-  PlainUser,
-  UpdateHasedUser,
-  UpdatePlainUser,
-  UserCredentials,
-} from './models/plain-users.type';
+import { HashedUser, PlainUser, UpdateHasedUser, UpdatePlainUser, UserCredentials } from './models/plain-users.type';
 
 export type CheckPasswordArgs = {
   plainPassword: string;
@@ -25,17 +19,11 @@ export class BcryptService {
     const hashed = await bcrypt.hash(plainPassword, this.config.saltOrRounds);
     return hashed;
   }
-  async checkPassword({
-    hashedPassword,
-    plainPassword,
-  }: CheckPasswordArgs): Promise<boolean> {
+  async checkPassword({ hashedPassword, plainPassword }: CheckPasswordArgs): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
 
-  async checkUser(
-    { plainPassword }: UserCredentials,
-    { hashedPassword }: HashedUser
-  ): Promise<boolean> {
+  async checkUser({ plainPassword }: UserCredentials, { hashedPassword }: HashedUser): Promise<boolean> {
     return this.checkPassword({ plainPassword, hashedPassword });
   }
 
@@ -50,10 +38,7 @@ export class BcryptService {
     const items = await Promise.all(users.map((item) => this.hashUser(item)));
     return items;
   }
-  async hashUserPatch({
-    plainPassword,
-    ...user
-  }: UpdatePlainUser): Promise<UpdateHasedUser> {
+  async hashUserPatch({ plainPassword, ...user }: UpdatePlainUser): Promise<UpdateHasedUser> {
     let hashedPassword;
     if (plainPassword !== undefined) {
       hashedPassword = await this.hashPassword(plainPassword);

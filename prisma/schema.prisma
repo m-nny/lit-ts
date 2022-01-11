@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../packages/prisma/src/@client"
+}
+
+// generator nestgraphql {
+//   provider = "node node_modules/prisma-nestjs-graphql"
+//   output   = "../packages/prisma/src/@gql"
+//   reExport = Directories
+// }
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  STUDENT
+  INSTRUCTOR
+}
+
+model User {
+  username       String   @id
+  fullName       String
+  hashedPassword String
+  role           UserRole @default(STUDENT)
+
+  solutions Solution[]
+  problems  Problem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Problem {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  author         User   @relation(fields: [authorUsername], references: [username])
+  authorUsername String
+
+  solutions Solution[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SolutionGradingStatus {
+  IN_QUEUE
+  PROCESSING
+  DONE
+}
+
+model Solution {
+  id            Int                   @id @default(autoincrement())
+  body          String
+  gradingStatus SolutionGradingStatus @default(IN_QUEUE)
+  gradingResult String?
+
+  author         User   @relation(fields: [authorUsername], references: [username])
+  authorUsername String
+
+  problem   Problem @relation(fields: [problemId], references: [id])
+  problemId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
