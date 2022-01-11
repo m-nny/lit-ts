@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { BcryptService } from '../users/users.bcrypt';
+import { BcryptService } from './users.bcrypt';
 
 type FindManyParams = {
   skip?: number;
@@ -15,7 +15,7 @@ type UpdateParams = {
   where: Prisma.UserWhereUniqueInput;
   data: Prisma.UserUpdateInput;
 };
-export type CreateFromPlain = Omit<Prisma.UserCreateInput, 'hashedPassword'> & {
+export type CreateUserParams = Omit<Prisma.UserCreateInput, 'hashedPassword'> & {
   plainPassword: string;
 };
 
@@ -36,7 +36,7 @@ export class UsersPrismaService {
     return [items, count];
   }
 
-  async create({ plainPassword, ...data }: CreateFromPlain): Promise<User> {
+  async create({ plainPassword, ...data }: CreateUserParams): Promise<User> {
     const hashedPassword = await this.bcrypt.hashPassword(plainPassword);
     const item = await this.prisma.user.create({ data: { ...data, hashedPassword } });
     return item;

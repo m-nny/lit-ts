@@ -1,14 +1,32 @@
 import { Test } from '@nestjs/testing';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AppUserRole } from '../auth/models/jwt.app-user';
-import { UsersEntity } from './models/users.entity';
 import { UsersPrismaResolver } from './users.resolver';
 import { UsersPrismaService } from './users.service';
 
 const moduleMocker = new ModuleMocker(global);
 
+const hashedPassword = 'hashed_password';
+const plainPassword = 'plain_hassword';
+
+const usersArray = [
+  {
+    username: 'jane_doe',
+    fullName: 'Jane Doe',
+    hashedPassword: hashedPassword,
+    role: AppUserRole.Admin,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+const oneUser = usersArray[0];
+
+const mockUsersService: Partial<UsersPrismaService> = {
+  findMany: jest.fn().mockResolvedValue([usersArray, usersArray.length]),
+  findOne: jest.fn().mockResolvedValue(oneUser),
+  create: jest.fn().mockResolvedValue(oneUser),
+};
 describe('UsersPrismaResolver', () => {
-  let service: jest.Mocked<UsersPrismaService>;
   let resolver: UsersPrismaResolver;
 
   beforeEach(async () => {
@@ -17,44 +35,7 @@ describe('UsersPrismaResolver', () => {
     })
       .useMocker((token) => {
         if (token === UsersPrismaService) {
-          return {
-            findMany: jest.fn(
-              async (): Promise<[UsersEntity[], number]> => [
-                [
-                  {
-                    username: 'jane_doe',
-                    fullName: 'Jane Doe',
-                    hashedPassword: '**hashed_password**',
-                    role: AppUserRole.Admin,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                  },
-                ],
-                1,
-              ]
-            ),
-            findOne: jest.fn(
-              async (username): Promise<UsersEntity | null> => ({
-                username: 'jane_doe',
-                fullName: 'Jane Doe',
-                hashedPassword: '**hashed_password**',
-                role: AppUserRole.Admin,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                ...username,
-              })
-            ),
-            create: jest.fn(
-              async (item): Promise<UsersEntity> => ({
-                ...item,
-                username: 'jane_doe',
-                hashedPassword: item.plainPassword + 'hash',
-                role: AppUserRole.Admin,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              })
-            ),
-          } as Partial<UsersPrismaService>;
+          return mockUsersService;
         }
         if (typeof token === 'function') {
           const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<any, any>;
@@ -63,8 +44,6 @@ describe('UsersPrismaResolver', () => {
         }
       })
       .compile();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    service = moduleRef.get(UsersPrismaService);
     resolver = moduleRef.get(UsersPrismaResolver);
   });
 
@@ -76,45 +55,26 @@ describe('UsersPrismaResolver', () => {
     it('should find users', async () => {
       const users = await resolver.findAll();
 
-      expect(users?.items).toContainEqual(
-        expect.objectContaining({
-          username: 'jane_doe',
-          fullName: 'Jane Doe',
-          hashedPassword: '**hashed_password**',
-          role: AppUserRole.Admin,
-        })
-      );
+      expect(users?.items).toEqual(usersArray);
+      expect(users?.length).toEqual(usersArray.length);
     });
   });
 
   describe('findById', () => {
     it('should find one user', async () => {
-      const user = await resolver.findById({ username: 'jane_doe' });
+      const user = await resolver.findById({ username: oneUser.username });
 
-      expect(user).toEqual(
-        expect.objectContaining({
-          username: 'jane_doe',
-          fullName: 'Jane Doe',
-          hashedPassword: '**hashed_password**',
-          role: AppUserRole.Admin,
-        })
-      );
+      expect(user).toEqual(oneUser);
     });
   });
   describe('create', () => {
     it('should make a new user', async () => {
       const user = await resolver.create({
-        username: 'jane_doe',
-        fullName: 'Jane Doe',
-        hashedPassword: '**hashed_password**',
+        ...oneUser,
+        plainPassword,
       });
 
-      expect(user).toEqual(
-        expect.objectContaining({
-          username: 'jane_doe',
-          fullName: 'Jane Doe',
-        })
-      );
+      expect(user).toEqual(oneUser);
     });
   });
 });

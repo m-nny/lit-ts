@@ -3,26 +3,26 @@ import { Test } from '@nestjs/testing';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AppUserRole } from '../auth/models/jwt.app-user';
 import { PrismaService } from '../prisma/prisma.service';
-import { BcryptService } from '../users/users.bcrypt';
+import { BcryptService } from './users.bcrypt';
 import { UsersPrismaService } from './users.service';
 import { PartialDeep } from 'type-fest';
 
 const moduleMocker = new ModuleMocker(global);
 
+const hashedPassword = 'hashed_password';
+const plainPassword = 'plain_hassword';
+
 const usersArray = [
   {
     username: 'jane_doe',
     fullName: 'Jane Doe',
-    hashedPassword: '**hashed_password**',
+    hashedPassword: hashedPassword,
     role: AppUserRole.Admin,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
 ];
 const oneUser = usersArray[0];
-
-const hashedPassword = 'hashed_password';
-const plainPassword = 'plain_hassword';
 
 const mockPrismaService: PartialDeep<PrismaService> = {
   $transaction: jest.fn((fns) => Promise.all(fns) as any),

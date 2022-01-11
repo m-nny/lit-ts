@@ -2,14 +2,26 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateUserInput {
+  fullName: String!
+  plainPassword: String!
+  role: UserRole
+  username: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
+type Mutation {
+  createUser(input: CreateUserInput!): User2!
+}
+
 type Query {
+  getUserById(key: UserKeyInput!): User2
+  getUsers: [UsersList!]!
   helloWorld: String!
-  userByKey(key: UserKeyInput!): User2
 }
 
 type User {
@@ -36,4 +48,9 @@ enum UserRole {
   Admin
   Instructor
   Student
+}
+
+type UsersList {
+  items: [User2!]!
+  length: Int!
 }
