@@ -1,9 +1,4 @@
-import {
-  CanActivate,
-  createParamDecorator,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
+import { CanActivate, createParamDecorator, ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthService } from '../auth.service';
 import { Request as ExpressRequest } from 'express';
@@ -35,16 +30,12 @@ export class JwtGuard implements CanActivate {
   getRequest = getExpressRequestFromContext;
 }
 
-export const CurrentUser = createParamDecorator(
-  (_, context: ExecutionContext): AppUser | undefined => {
-    const req = getExpressRequestFromContext(context);
-    return req.user;
-  }
-);
+export const CurrentUser = createParamDecorator((_, context: ExecutionContext): AppUser | undefined => {
+  const req = getExpressRequestFromContext(context);
+  return req.user;
+});
 
-export function getExpressRequestFromContext(
-  context: ExecutionContext
-): ExpressRequest {
+export function getExpressRequestFromContext(context: ExecutionContext): ExpressRequest {
   if ((context.getType() as any) === 'graphql') {
     const ctx = GqlExecutionContext.create(context).getContext();
     const req: ExpressRequest = ctx.req;

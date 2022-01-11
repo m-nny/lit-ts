@@ -1,28 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserCredentials } from '../users/models/plain-users.type';
-import { BcryptService } from '../users/users.bcrypt';
-import { UsersService } from '../users/users.service';
+import { UserCredentials, UsersPrismaService } from '../users.prisma/users.service';
 import { AppUser } from './models/jwt.app-user';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService, private bcrypt: BcryptService) {}
-
-  private async validateUserCredentials(userCredentials: UserCredentials): Promise<AppUser | null> {
-    const hashedUser = await this.usersService.findOne({ username: userCredentials.username });
-    if (!hashedUser) {
-      return null;
-    }
-    const isPasswordCorrect = await this.bcrypt.checkUser(userCredentials, hashedUser);
-    if (!isPasswordCorrect) {
-      return null;
-    }
-    return hashedUser.toAppUser();
-  }
+  constructor(private usersService: UsersPrismaService, private jwtService: JwtService) {}
 
   async login(userCredentials: UserCredentials): Promise<string | null> {
-    const appUser = await this.validateUserCredentials(userCredentials);
+    const appUser = await this.usersService.authorize(userCredentials);
     if (!appUser) {
       return null;
     }

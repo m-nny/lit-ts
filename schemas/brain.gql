@@ -3,23 +3,22 @@
 # ------------------------------------------------------
 
 input CreateProblemInput {
-  id: Int
-  solution: String!
+  authorUsername: String!
   title: String!
 }
 
 input CreateSolutionInput {
+  authorUsername: String!
   body: String!
   gradingResult: String
   gradingStatus: SolutionGradingStatus = InQueue
-  id: Int
-  problem: ProblemKeyInput!
+  problemId: Int!
 }
 
 input CreateUserInput {
   fullName: String!
   plainPassword: String!
-  roles: [UserRole!] = [Student]
+  role: UserRole
   username: String!
 }
 
@@ -32,17 +31,13 @@ type Mutation {
   createProblem(input: CreateProblemInput!): Problem!
   createSolution(input: CreateSolutionInput!): Solution!
   createUser(input: CreateUserInput!): User!
-  gradeSolution(force: Boolean = false, key: SolutionKeyInput!): Solution!
-  updateProblem(input: UpdateProblemInput!): Problem!
-  updateSolution(input: UpdateSolutionInput!): Solution!
-  updateUser(input: UpdateUserInput!): User!
 }
 
 type Problem {
   author: User!
+  authorUsername: String!
   createdAt: DateTime!
   id: Int!
-  solution: String!
   title: String!
   updatedAt: DateTime!
 }
@@ -57,28 +52,31 @@ type ProblemsList {
 }
 
 type Query {
-  allProblems: ProblemsList!
-  allSolutions: SolutionsList!
-  allUsers: UsersList!
-  problemByKey(key: ProblemKeyInput!): Problem
-  solutionByKey(key: SolutionKeyInput!): Solution
-  userByKey(key: UserKeyInput!): User
-  whoAmI: User
+  getProblemById(key: ProblemKeyInput!): Problem
+  getProblems: ProblemsList!
+  getSolutionById(key: SolutionKeyInput!): Solution
+  getSolutions: SolutionsList!
+  getUserById(key: UserKeyInput!): User
+  getUsers: UsersList!
+  helloWorld: String!
+  whoAmI: User!
 }
 
 type Solution {
   author: User!
+  authorUsername: String!
   body: String!
   createdAt: DateTime!
   gradingResult: String
   gradingStatus: SolutionGradingStatus!
   id: Int!
   problem: Problem!
+  problemId: Int!
   updatedAt: DateTime!
 }
 
 enum SolutionGradingStatus {
-  Finished
+  Done
   InQueue
   Processing
 }
@@ -92,41 +90,10 @@ type SolutionsList {
   length: Int!
 }
 
-input UpdateProblemInput {
-  key: ProblemKeyInput!
-  patch: UpdateProblemPatchInput!
-}
-
-input UpdateProblemPatchInput {
-  solution: String
-  title: String
-}
-
-input UpdateSolutionInput {
-  key: SolutionKeyInput!
-  patch: UpdateSolutionPatchInput!
-}
-
-input UpdateSolutionPatchInput {
-  body: String
-  gradingResult: String
-  gradingStatus: SolutionGradingStatus = InQueue
-}
-
-input UpdateUserInput {
-  key: UserKeyInput!
-  patch: UpdateUserPatchInput!
-}
-
-input UpdateUserPatchInput {
-  fullName: String
-  plainPassword: String
-}
-
 type User {
   createdAt: DateTime!
   fullName: String!
-  roles: [UserRole!]!
+  role: UserRole!
   updatedAt: DateTime!
   username: String!
 }
