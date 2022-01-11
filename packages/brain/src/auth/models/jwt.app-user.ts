@@ -1,6 +1,8 @@
+import { UserEntity } from '../../users.prisma/models/users.entity';
+
 export type AppUser = {
   username: string;
-  roles: AppUserRole[];
+  role: AppUserRole;
 };
 
 export enum AppUserRole {
@@ -8,3 +10,5 @@ export enum AppUserRole {
   Student = 'STUDENT',
   Instructor = 'INSTRUCTOR',
 }
+
+export const AppUserFrom = ({ username, role }: UserEntity): AppUser => ({ username, role: role as AppUserRole });

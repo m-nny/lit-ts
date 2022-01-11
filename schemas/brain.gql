@@ -107,14 +107,6 @@ enum UserRole {
   Student
 }
 
-type User_old {
-  createdAt: DateTime!
-  fullName: String!
-  roles: [UserRole!]!
-  updatedAt: DateTime!
-  username: String!
-}
-
 type UsersList {
   items: [User!]!
   length: Int!

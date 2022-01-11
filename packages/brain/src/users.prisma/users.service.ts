@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
+import { AppUser, AppUserRole } from '../auth/models/jwt.app-user';
 import { PrismaService } from '../prisma/prisma.service';
 import { BcryptService } from './users.bcrypt';
+
+export type UserCredentials = {
+  username: string;
+  plainPassword: string;
+};
 
 type FindManyParams = {
   skip?: number;
@@ -50,5 +56,19 @@ export class UsersPrismaService {
   async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {
     const item = await this.prisma.user.delete({ where });
     return item;
+  }
+
+  async authorize({ username, plainPassword }: UserCredentials): Promise<AppUser | null> {
+    const user = await this.findOne({ username });
+    if (!user) {
+      return null;
+    }
+    if (!this.bcrypt.checkPassword({ plainPassword, hashedPassword: user.hashedPassword })) {
+      return null;
+    }
+    return {
+      username,
+      role: user.role as AppUserRole,
+    };
   }
 }

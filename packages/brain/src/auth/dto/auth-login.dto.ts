@@ -1,5 +1,5 @@
 import { IsString } from 'class-validator';
-import { UserCredentials } from '../../users/models/plain-users.type';
+import { UserCredentials } from '../../users.prisma/users.service';
 
 export class UserCredentialsDto implements UserCredentials {
   @IsString()
