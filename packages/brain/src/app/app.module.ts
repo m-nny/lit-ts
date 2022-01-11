@@ -3,6 +3,7 @@ import { ConfigModule } from '../config/config.module';
 import { GraphqlModule } from '../graphql/graphql.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ProblemsPrismaModule } from '../problems.prisma/problems.module';
+import { SolutionsPrismaModule } from '../solutions.prisma/solutions.module';
 import { UsersPrismaModule } from '../users.prisma/users.module';
 
 @Module({
@@ -12,6 +13,7 @@ import { UsersPrismaModule } from '../users.prisma/users.module';
     PrismaModule,
     UsersPrismaModule,
     ProblemsPrismaModule,
+    SolutionsPrismaModule,
     // MikroOrmModule,
     // AuthModule,
     // SeedModule,

@@ -7,6 +7,14 @@ input CreateProblemInput {
   title: String!
 }
 
+input CreateSolutionInput {
+  authorUsername: String!
+  body: String!
+  gradingResult: String
+  gradingStatus: SolutionGradingStatus = InQueue
+  problemId: Int!
+}
+
 input CreateUserInput {
   fullName: String!
   plainPassword: String!
@@ -21,6 +29,7 @@ scalar DateTime
 
 type Mutation {
   createProblem(input: CreateProblemInput!): Problem!
+  createSolution(input: CreateSolutionInput!): Solution!
   createUser(input: CreateUserInput!): User!
 }
 
@@ -45,9 +54,39 @@ type ProblemsList {
 type Query {
   getProblemById(key: ProblemKeyInput!): Problem
   getProblems: ProblemsList!
+  getSolutionById(key: SolutionKeyInput!): Solution
+  getSolutions: SolutionsList!
   getUserById(key: UserKeyInput!): User
   getUsers: UsersList!
   helloWorld: String!
+}
+
+type Solution {
+  author: User!
+  authorUsername: String!
+  body: String!
+  createdAt: DateTime!
+  gradingResult: String
+  gradingStatus: SolutionGradingStatus!
+  id: Int!
+  problem: Problem!
+  problemId: Int!
+  updatedAt: DateTime!
+}
+
+enum SolutionGradingStatus {
+  Done
+  InQueue
+  Processing
+}
+
+input SolutionKeyInput {
+  id: Int!
+}
+
+type SolutionsList {
+  items: [Solution!]!
+  length: Int!
 }
 
 type User {
