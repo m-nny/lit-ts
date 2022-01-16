@@ -17,6 +17,7 @@
     "test:affected": "nx affected:test --parallel",
     "test:all": "nx run-many --target=test --all --parallel",
     "-----etc----": "",
+    "clean": "git clean -xdi -e .env",
     "seed": "nx seed",
     "psql": "docker compose exec postgres psql --user lit brain"
   },
@@ -29,6 +30,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@prisma/client": "3.7.0",
     "apollo-server-express": "^3.6.1",
+    "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@lit-ts/config": ["packages/config/src/index.ts"]
+      "@lit-ts/config": ["packages/config/src/index.ts"],
+      "@lit-ts/docker": ["packages/docker/src/index.ts"]
     },
     "esModuleInterop": true,
     "strict": true,

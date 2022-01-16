@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "brain": "packages/brain",
-    "config": "packages/config"
+    "config": "packages/config",
+    "docker": "packages/docker"
   }
 }
