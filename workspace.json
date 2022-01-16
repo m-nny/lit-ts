@@ -3,6 +3,7 @@
   "projects": {
     "brain": "packages/brain",
     "config": "packages/config",
-    "docker": "packages/docker"
+    "docker": "packages/docker",
+    "playground": "packages/playground"
   }
 }

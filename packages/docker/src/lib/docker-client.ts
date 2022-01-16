@@ -8,7 +8,7 @@ export class DockerClient {
       socketPath: `/var/run/docker.sock`,
     });
   }
-  public async listContainers(args: ListContainersuArgs): Promise<ListContainersResult> {
+  public async listContainers(args: ListContainersuArgs = {}): Promise<ListContainersResult> {
     const result = await this.axios.request<ListContainersResult>({
       method: 'GET',
       url: '/containers/json',
