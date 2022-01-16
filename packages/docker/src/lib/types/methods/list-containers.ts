@@ -1,6 +1,6 @@
 import { Container } from '../common/container';
 
-export type ListContainersuArgs = {
+export type ListContainersArgs = {
   all?: boolean;
   limit?: number;
   size?: boolean;

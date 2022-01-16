@@ -3,10 +3,16 @@ import { DockerClient } from '@lit-ts/docker';
 async function main() {
   const client = new DockerClient();
 
-  const containers = await client.listContainers();
-  console.log({ containers });
+  const container = await client.createContainer({ Image: 'hello-world' });
+  console.log({ container });
 
-  const allContainers = await client.listContainers({ all: true, limit: 2 });
-  console.log({ allContainers });
+  const started = await client.startContainer({ id: container.Id });
+  console.log({ started });
+
+  const result = await client.waitContainer({ id: container.Id });
+  console.log({ result });
+
+  const logs = await client.getContainerLogs({ id: container.Id, stdout: true });
+  console.log({ logs });
 }
 main();
